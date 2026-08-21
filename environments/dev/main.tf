@@ -34,3 +34,13 @@ module "security_groups" {
     Environment = var.environment
   }
 }
+
+module "ecr" {
+  source = "../../modules/ecr"
+
+  repository_name = "ecs-platform-dev-app"
+
+  tags = {
+    Environment = var.environment
+  }
+}
