@@ -19,3 +19,18 @@ module "vpc" {
     Environment = var.environment
   }
 }
+
+
+module "security_groups" {
+  source = "../../modules/security-groups"
+
+  name   = "ecs-platform-dev"
+  vpc_id = module.vpc.vpc_id
+
+  ecs_container_port = 8080
+  rds_port           = 5432
+
+  tags = {
+    Environment = var.environment
+  }
+}
