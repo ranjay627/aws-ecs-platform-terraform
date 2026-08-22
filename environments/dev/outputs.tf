@@ -98,3 +98,13 @@ output "alb_target_group_arn" {
   description = "ARN of the ALB target group."
   value       = module.alb.target_group_arn
 }
+
+output "ecs_service_name" {
+  description = "Name of the ECS service."
+  value       = module.ecs_service.service_name
+}
+
+output "ecs_service_arn" {
+  description = "ARN of the ECS service."
+  value       = module.ecs_service.service_arn
+}

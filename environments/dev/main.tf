@@ -105,3 +105,23 @@ module "alb" {
 
   environment = var.environment
 }
+
+module "ecs_service" {
+  source = "../../modules/ecs_service"
+
+  name                = "ecs-platform-${var.environment}-service"
+  cluster_arn         = module.ecs.cluster_arn
+  task_definition_arn = module.ecs.task_definition_arn
+
+  desired_count = 2
+
+  private_subnet_ids = module.vpc.private_subnet_ids
+  security_group_id  = module.security_groups.ecs_security_group_id
+
+  target_group_arn = module.alb.target_group_arn
+
+  container_name = "app"
+  container_port = 8080
+
+  environment = var.environment
+}
