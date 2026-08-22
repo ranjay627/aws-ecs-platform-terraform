@@ -83,3 +83,18 @@ output "cloudwatch_log_group_arn" {
   description = "ARN of the ECS CloudWatch log group."
   value       = module.cloudwatch.log_group_arn
 }
+
+output "alb_dns_name" {
+  description = "DNS name of the Application Load Balancer."
+  value       = module.alb.load_balancer_dns_name
+}
+
+output "alb_arn" {
+  description = "ARN of the Application Load Balancer."
+  value       = module.alb.load_balancer_arn
+}
+
+output "alb_target_group_arn" {
+  description = "ARN of the ALB target group."
+  value       = module.alb.target_group_arn
+}

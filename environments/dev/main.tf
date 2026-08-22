@@ -90,3 +90,18 @@ module "cloudwatch" {
     Environment = var.environment
   }
 }
+
+module "alb" {
+  source = "../../modules/alb"
+
+  name              = "ecs-platform-${var.environment}-alb"
+  target_group_name = "ecs-platform-${var.environment}-tg"
+
+  vpc_id            = module.vpc.vpc_id
+  public_subnet_ids = module.vpc.public_subnet_ids
+  security_group_id = module.security_groups.alb_security_group_id
+
+  target_port = 8080
+
+  environment = var.environment
+}
