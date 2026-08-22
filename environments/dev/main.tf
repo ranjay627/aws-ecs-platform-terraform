@@ -54,3 +54,13 @@ module "iam" {
     Environment = var.environment
   }
 }
+
+module "ecs" {
+  source = "../../modules/ecs"
+
+  cluster_name = "ecs-platform-dev"
+
+  tags = {
+    Environment = var.environment
+  }
+}
