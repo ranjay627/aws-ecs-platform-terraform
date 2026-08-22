@@ -76,3 +76,9 @@ variable "rds_master_user_secret_arn" {
   description = "ARN of the RDS-managed master user secret."
   type        = string
 }
+
+variable "environment_variables" {
+  description = "Non-sensitive environment variables for the ECS container."
+  type        = map(string)
+  default     = {}
+}

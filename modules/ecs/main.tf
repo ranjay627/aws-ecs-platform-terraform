@@ -30,6 +30,13 @@ resource "aws_ecs_task_definition" "this" {
       image     = var.container_image
       essential = true
 
+      environment = [
+        for name, value in var.environment_variables : {
+          name  = name
+          value = value
+        }
+      ]
+
       portMappings = [
         {
           containerPort = var.container_port

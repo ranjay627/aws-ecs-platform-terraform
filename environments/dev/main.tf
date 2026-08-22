@@ -76,6 +76,12 @@ module "ecs" {
 
   rds_master_user_secret_arn = module.rds.master_user_secret_arn
 
+  environment_variables = {
+    DB_HOST = module.rds.db_endpoint
+    DB_PORT = tostring(module.rds.db_port)
+    DB_NAME = module.rds.db_name
+  }
+
   log_group_name = module.cloudwatch.log_group_name
 
   secrets = [
