@@ -38,6 +38,13 @@ resource "aws_ecs_task_definition" "this" {
         }
       ]
 
+      secrets = [
+        for secret in var.secrets : {
+          name      = secret.name
+          valueFrom = secret.value_from
+        }
+      ]
+
       logConfiguration = {
         logDriver = "awslogs"
 

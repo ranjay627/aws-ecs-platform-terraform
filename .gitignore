@@ -30,3 +30,5 @@ terraform.rc
 
 # macOS
 .DS_Store
+
+tfplan

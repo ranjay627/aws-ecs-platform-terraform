@@ -41,3 +41,43 @@ resource "aws_iam_role" "ecs_task" {
     }
   )
 }
+
+data "aws_iam_policy_document" "ecs_task_secrets" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "secretsmanager:GetSecretValue"
+    ]
+
+    resources = [
+      var.rds_master_user_secret_arn
+    ]
+  }
+}
+
+resource "aws_iam_role_policy" "ecs_task_secrets" {
+  name   = "${var.name}-ecs-task-secrets"
+  role   = aws_iam_role.ecs_task.id
+  policy = data.aws_iam_policy_document.ecs_task_secrets.json
+}
+
+data "aws_iam_policy_document" "ecs_task_execution_secrets" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "secretsmanager:GetSecretValue"
+    ]
+
+    resources = [
+      var.rds_master_user_secret_arn
+    ]
+  }
+}
+
+resource "aws_iam_role_policy" "ecs_task_execution_secrets" {
+  name   = "${var.name}-ecs-task-execution-secrets"
+  role   = aws_iam_role.ecs_task_execution.id
+  policy = data.aws_iam_policy_document.ecs_task_execution_secrets.json
+}

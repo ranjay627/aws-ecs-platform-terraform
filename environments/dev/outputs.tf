@@ -108,3 +108,24 @@ output "ecs_service_arn" {
   description = "ARN of the ECS service."
   value       = module.ecs_service.service_arn
 }
+
+output "rds_instance_id" {
+  value = module.rds.db_instance_id
+}
+
+output "rds_endpoint" {
+  value = module.rds.db_endpoint
+}
+
+output "rds_port" {
+  value = module.rds.db_port
+}
+
+output "rds_database_name" {
+  value = module.rds.db_name
+}
+
+output "rds_master_user_secret_arn" {
+  value     = module.rds.master_user_secret_arn
+  sensitive = true
+}

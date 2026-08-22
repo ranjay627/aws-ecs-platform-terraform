@@ -48,7 +48,8 @@ module "ecr" {
 module "iam" {
   source = "../../modules/iam"
 
-  name = "ecs-platform-dev"
+  name                       = "ecs-platform-dev"
+  rds_master_user_secret_arn = module.rds.master_user_secret_arn
 
   tags = {
     Environment = var.environment
@@ -73,7 +74,20 @@ module "ecs" {
   task_execution_role_arn = module.iam.task_execution_role_arn
   task_role_arn           = module.iam.task_role_arn
 
+  rds_master_user_secret_arn = module.rds.master_user_secret_arn
+
   log_group_name = module.cloudwatch.log_group_name
+
+  secrets = [
+    {
+      name       = "DB_USERNAME"
+      value_from = "${module.rds.master_user_secret_arn}:username::"
+    },
+    {
+      name       = "DB_PASSWORD"
+      value_from = "${module.rds.master_user_secret_arn}:password::"
+    }
+  ]
 
   tags = {
     Environment = var.environment
@@ -124,4 +138,24 @@ module "ecs_service" {
   container_port = 8080
 
   environment = var.environment
+}
+
+module "rds" {
+  source = "../../modules/rds"
+
+  name               = "ecs-platform-${var.environment}-rds"
+  identifier         = "ecs-platform-${var.environment}-postgres"
+  environment        = var.environment
+  private_subnet_ids = module.vpc.private_subnet_ids
+  security_group_id  = module.security_groups.rds_security_group_id
+
+  engine_version        = "17"
+  instance_class        = "db.t4g.micro"
+  allocated_storage     = 50
+  max_allocated_storage = 200
+
+  database_name   = "appdb"
+  master_username = "appadmin"
+
+  backup_retention_period = 1
 }
