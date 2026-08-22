@@ -46,6 +46,9 @@ jobs:
         working-directory: app/ecs-demo
         run: ./mvnw package -DskipTests
 
+      - name: Debug OIDC claims
+        uses: github/actions-oidc-debugger@main
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
