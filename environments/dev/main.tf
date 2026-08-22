@@ -56,6 +56,24 @@ module "iam" {
   }
 }
 
+module "github_actions_iam" {
+  source = "../../modules/github-actions-iam"
+
+  name = "ecs-platform-dev"
+
+  github_repository = "ranjay627/aws-ecs-platform-terraform"
+  github_branch     = "main"
+
+  ecr_repository_arn = module.ecr.repository_arn
+
+  ecs_cluster_arn = module.ecs.cluster_arn
+  ecs_service_arn = module.ecs_service.service_arn
+
+  tags = {
+    Environment = var.environment
+  }
+}
+
 module "ecs" {
   source = "../../modules/ecs"
 

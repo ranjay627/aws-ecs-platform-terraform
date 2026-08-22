@@ -129,3 +129,8 @@ output "rds_master_user_secret_arn" {
   value     = module.rds.master_user_secret_arn
   sensitive = true
 }
+
+output "github_actions_role_arn" {
+  description = "ARN of the GitHub Actions deployment role."
+  value       = module.github_actions_iam.role_arn
+}
