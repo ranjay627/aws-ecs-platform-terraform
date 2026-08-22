@@ -46,14 +46,63 @@ jobs:
         working-directory: app/ecs-demo
         run: ./mvnw package -DskipTests
 
-      - name: Debug OIDC claims
-        uses: github/actions-oidc-debugger@main
+      - name: Inspect OIDC subject
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          TOKEN_RESPONSE=$(curl -sS \
+            -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com")
+
+          OIDC_TOKEN=$(echo "$TOKEN_RESPONSE" | jq -r '.value')
+
+          if [ -z "$OIDC_TOKEN" ] || [ "$OIDC_TOKEN" = "null" ]; then
+            echo "ERROR: Failed to obtain GitHub OIDC token"
+            exit 1
+          fi
+
+          OIDC_PAYLOAD=$(echo "$OIDC_TOKEN" | cut -d '.' -f2)
+
+          OIDC_PAYLOAD=$(printf '%s' "$OIDC_PAYLOAD" | tr '_-' '/+')
+
+          case $((${#OIDC_PAYLOAD} % 4)) in
+            2)
+              OIDC_PAYLOAD="${OIDC_PAYLOAD}=="
+              ;;
+            3)
+              OIDC_PAYLOAD="${OIDC_PAYLOAD}="
+              ;;
+            0)
+              ;;
+            *)
+              echo "ERROR: Invalid JWT payload"
+              exit 1
+              ;;
+          esac
+
+          echo "GitHub OIDC claims:"
+          echo "$OIDC_PAYLOAD" | base64 -d | jq '{
+            sub,
+            aud,
+            repository,
+            repository_id,
+            repository_owner,
+            repository_owner_id,
+            ref,
+            sha,
+            workflow
+          }'
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::037547369675:role/ecs-platform-dev-github-actions
           aws-region: ${{ env.AWS_REGION }}
+
+      - name: Verify AWS identity
+        run: |
+          aws sts get-caller-identity
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -66,6 +115,9 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
           IMAGE_URI="$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
+          echo "Building image:"
+          echo "$IMAGE_URI"
 
           docker build \
             -t "$IMAGE_URI" \
