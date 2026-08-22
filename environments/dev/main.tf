@@ -64,3 +64,14 @@ module "ecs" {
     Environment = var.environment
   }
 }
+
+module "cloudwatch" {
+  source = "../../modules/cloudwatch"
+
+  log_group_name    = "/ecs/ecs-platform-dev"
+  retention_in_days = 30
+
+  tags = {
+    Environment = var.environment
+  }
+}
