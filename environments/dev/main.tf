@@ -60,6 +60,21 @@ module "ecs" {
 
   cluster_name = "ecs-platform-dev"
 
+  task_family    = "ecs-platform-dev-app"
+  container_name = "app"
+
+  container_image = "${module.ecr.repository_url}:1.0.0"
+
+  container_port = 8080
+
+  cpu    = 512
+  memory = 1024
+
+  task_execution_role_arn = module.iam.task_execution_role_arn
+  task_role_arn           = module.iam.task_role_arn
+
+  log_group_name = module.cloudwatch.log_group_name
+
   tags = {
     Environment = var.environment
   }
