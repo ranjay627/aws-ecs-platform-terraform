@@ -48,3 +48,13 @@ output "ecr_repository_url" {
   description = "ECR repository URL."
   value       = module.ecr.repository_url
 }
+
+output "task_execution_role_arn" {
+  description = "ARN of the ECS task execution role."
+  value       = module.iam.task_execution_role_arn
+}
+
+output "task_role_arn" {
+  description = "ARN of the ECS task role."
+  value       = module.iam.task_role_arn
+}

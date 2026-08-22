@@ -44,3 +44,13 @@ module "ecr" {
     Environment = var.environment
   }
 }
+
+module "iam" {
+  source = "../../modules/iam"
+
+  name = "ecs-platform-dev"
+
+  tags = {
+    Environment = var.environment
+  }
+}
